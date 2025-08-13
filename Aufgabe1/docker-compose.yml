@@ -8,7 +8,10 @@ services:
     expose:
       - "3000"
     ports:
-      - "3001:3000" 
+      - "3001:3000"
+    environment:
+      - PORT=3000
+      - PEERS=http://backend2:3000,http://backend3:3000
 
   backend2:
     build:
@@ -18,6 +21,9 @@ services:
       - "3000"
     ports:
       - "3002:3000" 
+    environment:
+      - PORT=3000
+      - PEERS=http://backend1:3000,http://backend3:3000
 
   backend3:
     build:
@@ -26,5 +32,8 @@ services:
     expose:
       - "3000"
     ports:
-      - "3003:3000" 
+      - "3003:3000"
+    environment:
+      - PORT=3000
+      - PEERS=http://backend1:3000,http://backend2:3000
   
