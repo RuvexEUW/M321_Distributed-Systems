@@ -33,10 +33,39 @@ app.get('/increment', async (req, res) => {
     res.json({ counter });
 });
 
+app.post('/replicate', async (req, res) => {
+    const newValue = req.body.counter;
+    if (typeof newValue === 'number' && newValue > counter) {
+        counter = newValue;
+    }
+    res.json({ counter });
+});
+
 app.get('/counter', (req, res) => {
     res.json({ counter });
 });
 
-app.listen(currentPort, async () => {
-    console.log(`Server running on port ${currentPort}`)
+app.post('/sync', async (req, res) => {
+    const peerCounters = req.body.counters || [];
+    const maxCounter = Math.max(counter, ...peerCounters);
+    counter = maxCounter;
+    res.json({ counter });
+});
+
+async function startupSync() {
+    if (PEERS.length === 0) return;
+    try {
+        const responses = await Promise.all(PEERS.map(peer => axios.get(`${peer}/counter`).catch(() => ({ data: { counter: 0 } }))));
+        const peerCounters = responses.map(r => r.data.counter || 0);
+        const maxCounter = Math.max(counter, ...peerCounters);
+        counter = maxCounter;
+        console.log(`[StartupSync] Counter auf ${counter} gesetzt`);
+    } catch (err) {
+        console.log(`[StartupSync] Fehler: ${err.message}`);
+    }
+}
+
+app.listen(PORT, async () => {
+    console.log(`Server läuft auf Port ${PORT}`);
+    await startupSync();
 });
