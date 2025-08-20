@@ -1,4 +1,6 @@
-services:
+version: '3'
+
+services: 
   backend1:
     build:
       context: .
@@ -8,7 +10,7 @@ services:
     environment:
       - SERVER_ID=server1
       - PORT=3000
-      - OTHER_BACKENDS=http://backend2:3000,http://backend3:3000
+      - PEERS=http://backend2:3000,http://backend3:3000
 
   backend2:
     build:
@@ -19,7 +21,7 @@ services:
     environment:
       - SERVER_ID=server2
       - PORT=3000
-      - OTHER_BACKENDS=http://backend1:3000,http://backend3:3000
+      - PEERS=http://backend1:3000,http://backend3:3000
 
   backend3:
     build:
@@ -30,4 +32,4 @@ services:
     environment:
       - SERVER_ID=server3
       - PORT=3000
-      - OTHER_BACKENDS=http://backend1:3000,http://backend2:3000
+      - PEERS=http://backend1:3000,http://backend2:3000
