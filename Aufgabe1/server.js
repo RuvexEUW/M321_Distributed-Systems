@@ -6,8 +6,8 @@ const app = express();
 app.use(express.json());
 
 const PORT = process.env.PORT || 3000;
-const SELF_URL = `http://localhost:${PORT}`;
-const PEERS = (process.env.PEERS || '').split(',').filter(p => p);
+const SERVER_ID = process.env.SERVER_ID || 'server1';
+const OTHER_SERVERS = process.env.OTHER_BACKENDS?.split(',').filter(Boolean) || [];
 
 let counter = 0;
 
@@ -15,55 +15,65 @@ function simulateLatency() {
     return new Promise(resolve => setTimeout(resolve, Math.random() * 200));
 }
 
-async function replicateCounter(newValue) {
-    const promises = PEERS.map(async peer => {
-        try {
-            await axios.post('${peer}/replicate', { counter: newValue});
-        } catch (err) {
-            console.log('[Replicate] Fehler bei ${peer}: ${err.message}');
-        }
-    });
-    await Promise.all(promises)
+async function replicateToPeers(value) {
+  for (const server of OTHER_SERVERS) {
+    try {
+      await axios.post(`${server}/sync`, { counter: value });
+    } catch (err) {
+      console.log(`[${SERVER_ID}] Failed to sync with ${server}: ${err.message}`);
+    }
+  }
 }
 
-app.get('/increment', async (req, res) => {
-    await simulateLatency();
-    counter++;
-    await replicateCounter(counter);
-    res.json({ counter });
-});
-
-app.post('/replicate', async (req, res) => {
-    const newValue = req.body.counter;
-    if (typeof newValue === 'number' && newValue > counter) {
-        counter = newValue;
+async function initializeCounts() {
+  let maxCounter = counter;
+  for (const server of OTHER_SERVERS) {
+    try {
+      const { data } = await axios.get(`${server}/counter`);
+      if (typeof data.counter === 'number' && data.counter > maxCounter) {
+        maxCounter = data.counter;
+      }
+    } catch (err) {
+      console.log(`[${SERVER_ID}] Could not fetch counter from ${server}`);
     }
-    res.json({ counter });
-});
+  }
+  counter = maxCounter;
+  console.log(`[${SERVER_ID}] Initialized counter to ${counter}`);
+}
 
-app.get('/counter', (req, res) => {
-    res.json({ counter });
+app.post('/increment', async (req, res) => {
+  await simulateLatency();
+  counter++;
+  console.log(`[${SERVER_ID}] Counter incremented to ${counter}`);
+  await replicateToPeers(counter);
+  res.json({ counter, server: SERVER_ID });
 });
 
 app.post('/sync', async (req, res) => {
-    const peerCounters = req.body.counters || [];
-    const maxCounter = Math.max(counter, ...peerCounters);
-    counter = maxCounter;
-    res.json({ counter });
+  await simulateLatency();
+  if (typeof req.body.counter === 'number' && req.body.counter > counter) {
+    counter = req.body.counter;
+    console.log(`[${SERVER_ID}] Counter synchronized to ${counter}`);
+  }
+  res.json({ counter });
 });
 
-async function startupSync() {
-    if (PEERS.length === 0) return;
-    try {
-        const responses = await Promise.all(PEERS.map(peer => axios.get(`${peer}/counter`).catch(() => ({ data: { counter: 0 } }))));
-        const peerCounters = responses.map(r => r.data.counter || 0);
-        const maxCounter = Math.max(counter, ...peerCounters);
-        counter = maxCounter;
-        console.log(`[StartupSync] Counter auf ${counter} gesetzt`);
-    } catch (err) {
-        console.log(`[StartupSync] Fehler: ${err.message}`);
-    }
-}
+app.get('/counter', (req, res) => {
+  res.json({ counter, server: SERVER_ID });
+});
+
+app.get('/protected', validateToken, (req, res) => {
+  res.json({
+    message: 'This is a protected route',
+    user: req.user,
+  });
+});
+
+// -------------------- Startup --------------------
+app.listen(PORT, async () => {
+  await initializeCounts();
+  console.log(`[${SERVER_ID}] Running on port ${PORT}`);
+});
 
 app.listen(PORT, async () => {
     console.log(`Server läuft auf Port ${PORT}`);
