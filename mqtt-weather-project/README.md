@@ -21,3 +21,10 @@ Dieses Projekt simuliert verteilte Wetterstationen, die Messdaten über MQTT an 
 - Abonniere Wetterdaten vom Topic `weather`
 - Speichere die Daten sinnvoll (z. B. JSON-Datei, SQLite)
 - Erstelle einfache Auswertungen (Durchschnitt, Verlauf, usw.)
+
+
+TUTORIAL: https://www.emqx.com/en/blog/how-to-use-mqtt-in-python
+
+
+
+Zusatz: A & B umgesetzt
