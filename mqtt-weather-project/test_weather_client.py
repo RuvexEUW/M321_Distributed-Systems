@@ -1,35 +1,53 @@
-import weather_client
+from datetime import datetime, timezone
+
+from weather_client import validate, parse_iso
 
 
-def test_is_valid_temperature():
+def test_validate_accepts_valid_values():
     # --- Arrange ---
-    valid_temp = 22.5
-    invalid_temp_low = -100     # lower than realistic
-    invalid_temp_high = 200     # higher than realistic
+    temp = "20.5"
+    hum = "50"
 
     # --- Act ---
-    result_valid = weather_client.is_valid_temperature(valid_temp)
-    result_low = weather_client.is_valid_temperature(invalid_temp_low)
-    result_high = weather_client.is_valid_temperature(invalid_temp_high)
+    is_valid, errors = validate(temp, hum)
 
     # --- Assert ---
-    assert result_valid is True
-    assert result_low is False
-    assert result_high is False
+    assert is_valid is True
+    assert errors == []
 
 
-def test_is_valid_humidity():
+def test_validate_rejects_invalid_values():
     # --- Arrange ---
-    valid_humidity = 55
-    low_humidity = -10
-    high_humidity = 200
+    temp = "-999"
+    hum = "150"
 
     # --- Act ---
-    result_valid = weather_client.is_valid_humidity(valid_humidity)
-    result_low = weather_client.is_valid_humidity(low_humidity)
-    result_high = weather_client.is_valid_humidity(high_humidity)
+    is_valid, errors = validate(temp, hum)
 
     # --- Assert ---
-    assert result_valid is True
-    assert result_low is False
-    assert result_high is False
+    assert is_valid is False
+    assert any("invalid temperature" in e for e in errors)
+    assert any("invalid humidity" in e for e in errors)
+
+
+def test_parse_iso_valid_and_invalid():
+    # --- Arrange ---
+    valid_ts = "2024-01-02T12:34:56Z"
+    invalid_ts = "not-a-timestamp"
+
+    # --- Act ---
+    dt_valid = parse_iso(valid_ts)
+    dt_invalid = parse_iso(invalid_ts)
+
+    # --- Assert ---
+    assert isinstance(dt_valid, datetime)
+    assert dt_valid.tzinfo == timezone.utc
+    assert (
+        dt_valid.year == 2024
+        and dt_valid.month == 1
+        and dt_valid.day == 2
+        and dt_valid.hour == 12
+        and dt_valid.minute == 34
+        and dt_valid.second == 56
+    )
+    assert dt_invalid is None
