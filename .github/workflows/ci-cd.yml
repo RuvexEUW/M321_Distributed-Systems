@@ -118,8 +118,8 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
-          context: ./mqtt-weather-project
-          file: ./mqtt-weather-project/Dockerfile
+          context: ./mqtt-weather-project/stations
+          file: ./mqtt-weather-project/stations/Dockerfile
           push: true
           tags: |
             ${{ env.DOCKER_IMAGE }}:latest
