@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Login Callback</title>
+  </head>
+  <body>
+    <h2>Callback – bitte warten...</h2>
+
+    <script type="module">
+      import { handleCallback } from './src/auth/oidc.js';
+
+      (async () => {
+        try {
+          const user = await handleCallback();
+          console.log('User nach Callback:', user);
+          window.location.href = '/';
+        } catch (err) {
+          console.error('Callback-Fehler', err);
+          document.body.innerHTML = '<h2>Fehler beim Login-Callback</h2><pre>' + err + '</pre>';
+        }
+      })();
+    </script>
+  </body>
+</html>

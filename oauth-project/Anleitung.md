@@ -25,3 +25,23 @@ Web Origins: *
 # Frontend und Backend einrichten
 
 ## Frontend
+
+
+2.4 OIDC Discovery & JWKS-URL
+
+Diese URLs brauchst du gleich für Frontend & Backend:
+
+Issuer / Authority:
+http://localhost:8080/realms/m321
+
+OpenID-Configuration (Discovery):
+http://localhost:8080/realms/m321/.well-known/openid-configuration 
+
+JWKS (Public Keys): steht in der Discovery unter jwks_uri, meist:
+http://localhost:8080/realms/m321/protocol/openid-connect/certs
+
+
+
+Backend:
+http://localhost:3000
+
