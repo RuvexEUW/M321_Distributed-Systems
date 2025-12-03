@@ -90,7 +90,8 @@ jobs:
           pip install bandit
 
       - name: Run Bandit scan
-        run: bandit -r . -x .venv,venv,tests,__pycache__
+        run: bandit -r . -c bandit.yaml
+
 
   # 4) Docker bauen & pushen
   build_and_push:

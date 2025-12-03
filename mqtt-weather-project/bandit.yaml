@@ -1,0 +1,10 @@
+exclude_dirs:
+  - stations
+  - tests
+  - __pycache__
+  - .venv
+  - venv
+
+skips:
+  - B101   # asserts used in test files
+  - B311   # random.random in simulation code
