@@ -6,6 +6,6 @@ exclude_dirs:
   - venv
 
 skips:
-  - B101   # asserts used in test files
-  - B311   # random.random in simulation code
+  - B101
+  - B311
   - B110
