@@ -10,6 +10,7 @@ const __dirname = path.dirname(__filename);
 const app = express();
 app.use(express.static(path.join(__dirname, 'public')));
 
+<<<<<<< HEAD
 /**
  * Redis-Setup
  * - Verbindet bei Start
@@ -36,6 +37,9 @@ try {
  * - Prüft zuerst den Cache
  * - MISS: holt von PokeAPI, speichert mit TTL
  */
+=======
+
+>>>>>>> cbade7a7af1ee9030feedbcb86e5cf5ca5da2fd8
 app.get('/api/pokemon/:name', async (req, res) => {
   const name = req.params.name.toLowerCase();
   const cacheKey = `pokemon:${name}`;

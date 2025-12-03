@@ -16,7 +16,7 @@ Dieses Projekt simuliert verteilte Wetterstationen, die Messdaten über MQTT an 
    python main.py
    ```
 
-## Ziel für Lernende
+## Aufgabe
 
 - Abonniere Wetterdaten vom Topic `weather`
 - Speichere die Daten sinnvoll (z. B. JSON-Datei, SQLite)
