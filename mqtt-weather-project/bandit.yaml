@@ -8,3 +8,4 @@ exclude_dirs:
 skips:
   - B101   # asserts used in test files
   - B311   # random.random in simulation code
+  - B110
