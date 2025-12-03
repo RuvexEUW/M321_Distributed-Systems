@@ -28,3 +28,6 @@ TUTORIAL: https://www.emqx.com/en/blog/how-to-use-mqtt-in-python
 
 
 Zusatz: A & B umgesetzt
+
+
+docker Token: ?
