@@ -1,15 +1,12 @@
-import { createApp } from 'vue'
-import App from './App.vue'
-
-
+// Datei: oauth-project/frontend/src/main.js
 
 import { login, logout, getAccessToken } from './auth/oidc.js';
 
 function setResult(text) {
   const el = document.getElementById('result');
-  if (el) {
-    el.textContent = typeof text === 'string' ? text : JSON.stringify(text, null, 2);
-  }
+  if (!el) return;
+  el.textContent =
+    typeof text === 'string' ? text : JSON.stringify(text, null, 2);
 }
 
 window.addEventListener('DOMContentLoaded', () => {
@@ -44,10 +41,10 @@ window.addEventListener('DOMContentLoaded', () => {
           return;
         }
 
-        const response = await fetch('http://localhost:3000/api/data', {
+        const response = await fetch('http://localhost:3001/api/data', {
           headers: {
-            'Authorization': `Bearer ${token}`
-          }
+            Authorization: `Bearer ${token}`,
+          },
         });
 
         if (!response.ok) {
@@ -64,7 +61,3 @@ window.addEventListener('DOMContentLoaded', () => {
     });
   }
 });
-
-
-
-createApp(App).mount('#app')
