@@ -31,3 +31,7 @@ Zusatz: A & B umgesetzt
 
 
 docker Token: ?
+
+
+
+used here ci-cd.yml, bandit.yml, setup.cfg
