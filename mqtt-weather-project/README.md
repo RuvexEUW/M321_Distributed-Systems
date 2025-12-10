@@ -35,3 +35,5 @@ docker Token: ?
 
 
 used here ci-cd.yml, bandit.yml, setup.cfg
+
+test_weather_client.py
