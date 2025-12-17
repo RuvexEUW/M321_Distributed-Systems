@@ -5,7 +5,7 @@ from weather_client import validate, parse_iso
 
 def test_validate_accepts_valid_values():
     # --- Arrange ---
-    temp = "2000000.5"
+    temp = "20.5"
     hum = "50"
 
     # --- Act ---
